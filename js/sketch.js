@@ -93,13 +93,17 @@ function loadSound(src, volume=1, loop=false) {
 
 
 function spawnFruit() {
-  // Generate fruit on grid
+  // Generate fruit on grid and avoid spawning on nake
   var x = floor(random(col))*tile;
   var y = floor(random(col))*tile;
-
-  for(let i=0; i<snake.tail.length;i++){
-    // if 
+  for (let _ = 0; _ < snake.tail.length; _++) {
+    if (dist(x, y, snake.tail[_].x, snake.tail[_].y) <= tile) {
+      return food = spawnFruit();
+    } else {
+      return food = createVector(x, y);
+    }
   }
+
   return food = createVector(x, y);
 }
 
@@ -176,16 +180,16 @@ class Snake {
       rect(this.x, this.y, tile, tile, 10, 10, 0, 0);
     }
 
-    // // Drawing the eyes for snake
-    // noStroke();
-    // fill("#ccc");
-    // circle(this.x + tile / 6, this.y + tile / 2, tile / 2);
-    // circle(this.x + (tile-tile/6), this.y + tile / 2, tile / 2);
+    // Drawing the eyes for snake
+    noStroke();
+    fill("#ccc");
+    circle(this.x + tile / 6, this.y + tile / 2, tile / 2);
+    circle(this.x + (tile-tile/6), this.y + tile / 2, tile / 2);
 
-    // // Make the eyeballs face the mouse
-    // fill("#114411");
-    // circle(this.x + (tile/6)/3, this.y + tile / 2, tile / 4);
-    // circle(this.x + (tile-(tile/18)*5), this.y + tile / 2, tile / 4);
+    // Make the eyeballs face the mouse
+    fill("#114411");
+    circle(this.x + (tile/6)/3, this.y + tile / 2, tile / 4);
+    circle(this.x + (tile-(tile/18)*5), this.y + tile / 2, tile / 4);
 
   }
 
