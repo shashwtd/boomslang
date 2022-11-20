@@ -1,12 +1,13 @@
 var scr;
 var col = 25;
+var speed = 10;
 var tile;
 var snake;
-var food;
-var apple;
+var apple, food;
+var eat, beep, death, music;
 
 bg = () => {
-  const bg_color = "#1a1a1a";
+  var bg_color = "#1a1a1a";
   background(bg_color);
   stroke("#222");
   for (let _ = 0; _ < col; _++) {
@@ -22,18 +23,24 @@ preload = () => {
 
   // load images
   apple = loadImage('/res/apple.svg');
+
+  // load sounds
+  eat = loadSound('/res/eat.wav');
+  beep = loadSound('/res/beep.wav', 0.3);
+  death = loadSound('/res/die.wav');
+  music = loadSound('/res/music.wav', 0.2, true);
 }
 
 setup = () => {
-
   noStroke();
   createCanvas(scr.x, scr.y).parent('game');
-  frameRate(10);
+  frameRate(speed);
 
   bg();
 
   snake = new Snake();
   spawnFruit();
+  music.play()
 }
 
 draw = () => {
@@ -61,14 +68,29 @@ function keyPressed() {
   } else if (keyCode === LEFT_ARROW || keyCode === 65) {
     snake.dir(-1, 0);
   } else if (keyCode === 32) {
-    snake.grow();
+    // snake.grow();
+    // eat.play()
   }
 }
 
+// load sound funtion for howler.js
+function loadSound(src, volume=1, loop=false) {
+  return new Howl({
+    src: [src],
+    volume: volume,
+    loop: loop,
+
+    onload: function() {
+      console.log('loaded sound: ' + src);
+    }
+  });
+}
+
+
 function spawnFruit() {
   // Generate fruit on grid
-  let x = floor(random(col))*tile;
-  let y = floor(random(col))*tile;
+  var x = floor(random(col))*tile;
+  var y = floor(random(col))*tile;
   food = createVector(x, y);
 }
 
@@ -76,7 +98,7 @@ class Snake {
   constructor() {
     this.y = floor(col/2)*tile;
     this.x = floor(col/2)*tile;
-    this.xspeed = 1;
+    this.xspeed = 0;
     this.yspeed = 0;
     this.total = 0;
     this.tail = [];
@@ -98,13 +120,13 @@ class Snake {
   }
 
   show() {
-    const color = "#445599";
-    let l = this.tail.length
+    var color = "#445599";
+    var l = this.tail.length
     for (let i = 0; i < l; i++) {
-      let part = this.tail[i];
-      let decrease_x = 0;
-      let decrease_y = 0;
-      const opacity = (floor((145 / this.tail.length) * i) + 110).toString(16);
+      var part = this.tail[i];
+      var decrease_x = 0;
+      var decrease_y = 0;
+      var opacity = (floor((145 / this.tail.length) * i) + 110).toString(16);
       fill(color + opacity);
       if (this.tail[i - 1].x != this.tail[i].x) {
         decrease_x = 0;
@@ -159,14 +181,19 @@ class Snake {
   }
 
   dir(x, y) {
-    this.xspeed = x;
-    this.yspeed = y;
+    // Update and play sound if there is a change
+    if (this.xspeed != x || this.yspeed != y) {
+      this.xspeed = x;
+      this.yspeed = y;
+      beep.play();
+    }
   }
 
   eat(pos) {
-    let d = dist(this.x, this.y, pos.x, pos.y);
+    var d = dist(this.x, this.y, pos.x, pos.y);
     if (d < 1) {
       this.total++;
+      eat.play();
       return true;
     } else {
       return false;
@@ -183,10 +210,11 @@ class Snake {
 
   gameOver() {
     for (let i = 0; i < this.tail.length; i++) {
-      let pos = this.tail[i];
-      let d = dist(this.x, this.y, pos.x, pos.y);
+      var pos = this.tail[i];
+      var d = dist(this.x, this.y, pos.x, pos.y);
       if (d < 1) {
         console.log("starting over");
+        death.play()
         this.total = 0;
         this.tail = [];
       }
