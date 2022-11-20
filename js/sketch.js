@@ -6,6 +6,14 @@ var snake;
 var apple, food;
 var eat, beep, death, music;
 
+function start_game() {
+  snake = new Snake();
+  // snake.grow();
+  spawnFruit();
+  music = loadSound('/res/music.wav', 0.2, true);
+  music.play();
+}
+
 bg = () => {
   var bg_color = "#1a1a1a";
   background(bg_color);
@@ -20,10 +28,10 @@ bg = () => {
 preload = () => {
   scr = createVector(round(window.innerHeight - 50), round(window.innerHeight - 50));
   tile = scr.x / col;
-
+  
   // load images
   apple = loadImage('/res/apple.svg');
-
+  
   // load sounds
   eat = loadSound('/res/eat.wav');
   beep = loadSound('/res/beep.wav', 0.3);
@@ -32,15 +40,11 @@ preload = () => {
 }
 
 setup = () => {
-  noStroke();
   createCanvas(scr.x, scr.y).parent('game');
   frameRate(speed);
-
+  noStroke();
   bg();
-
-  snake = new Snake();
-  spawnFruit();
-  music.play()
+  start_game();
 }
 
 draw = () => {
@@ -56,6 +60,7 @@ draw = () => {
   // Draw fruit
   image(apple, food.x, food.y, tile, tile);
 }
+
 
 function keyPressed() {
   // WASD + arrow controls
@@ -91,14 +96,18 @@ function spawnFruit() {
   // Generate fruit on grid
   var x = floor(random(col))*tile;
   var y = floor(random(col))*tile;
-  food = createVector(x, y);
+
+  for(let i=0; i<snake.tail.length;i++){
+    // if 
+  }
+  return food = createVector(x, y);
 }
 
 class Snake {
   constructor() {
     this.y = floor(col/2)*tile;
     this.x = floor(col/2)*tile;
-    this.xspeed = 0;
+    this.xspeed = 1;
     this.yspeed = 0;
     this.total = 0;
     this.tail = [];
@@ -214,9 +223,17 @@ class Snake {
       var d = dist(this.x, this.y, pos.x, pos.y);
       if (d < 1) {
         console.log("starting over");
-        death.play()
         this.total = 0;
         this.tail = [];
+        // Play death sound and fade music
+        death.play();
+        music.fade(0.2, 0, 500);
+        
+        // Reset the game after 3 seconds
+        setTimeout(function(){
+          start_game();
+        }, 1500);
+
       }
     }
   }

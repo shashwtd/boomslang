@@ -23,10 +23,10 @@ body {
     justify-content: center;
 }
 
-/* main {
-    width: 50%;
+main {
+    width: 30%;
     height: 100%;
-} */
+}
 
 #game {
     width: 50%;
