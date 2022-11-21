@@ -180,16 +180,16 @@ class Snake {
       rect(this.x, this.y, tile, tile, 10, 10, 0, 0);
     }
 
-    // Drawing the eyes for snake
-    noStroke();
-    fill("#ccc");
-    circle(this.x + tile / 6, this.y + tile / 2, tile / 2);
-    circle(this.x + (tile-tile/6), this.y + tile / 2, tile / 2);
+    // // Drawing the eyes for snake
+    // noStroke();
+    // fill("#ccc");
+    // circle(this.x + tile / 6, this.y + tile / 2, tile / 2);
+    // circle(this.x + (tile-tile/6), this.y + tile / 2, tile / 2);
 
-    // Make the eyeballs face the mouse
-    fill("#114411");
-    circle(this.x + (tile/6)/3, this.y + tile / 2, tile / 4);
-    circle(this.x + (tile-(tile/18)*5), this.y + tile / 2, tile / 4);
+    // // Make the eyeballs face the mouse
+    // fill("#114411");
+    // circle(this.x + (tile/6)/3, this.y + tile / 2, tile / 4);
+    // circle(this.x + (tile-(tile/18)*5), this.y + tile / 2, tile / 4);
 
   }
 
