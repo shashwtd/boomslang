@@ -6,6 +6,8 @@ var snake;
 var apple, food;
 var eat, beep, death, music;
 
+var mode;
+
 function start_game() {
   snake = new Snake();
   // snake.grow();
@@ -40,6 +42,7 @@ preload = () => {
 }
 
 setup = () => {
+  mode = false;
   createCanvas(scr.x, scr.y).parent('game');
   frameRate(speed);
   noStroke();
@@ -48,6 +51,9 @@ setup = () => {
 }
 
 draw = () => {
+  if (mode == 0) {
+    return display_menu();
+  }
   bg();
   snake.gameOver();
   snake.update();
@@ -59,6 +65,9 @@ draw = () => {
 
   // Draw fruit
   image(apple, food.x, food.y, tile, tile);
+}
+
+function display_menu() {
 }
 
 
