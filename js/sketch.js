@@ -16,6 +16,11 @@ function start_game() {
   music.play();
 }
 
+window.onload = () => {
+  // moving the game menu inside canvas
+  console.log(document.getElementById('gameCanvas').appendChild(document.getElementById('menu')));
+}
+
 bg = () => {
   var bg_color = "#1a1a1a";
   background(bg_color);
@@ -28,6 +33,7 @@ bg = () => {
 }
 
 preload = () => {
+  
   scr = createVector(round(window.innerHeight - 50), round(window.innerHeight - 50));
   tile = scr.x / col;
   
@@ -42,8 +48,9 @@ preload = () => {
 }
 
 setup = () => {
+  console.log("load time: " + floor(millis()) + "ms");  
   mode = false;
-  createCanvas(scr.x, scr.y).parent('game');
+  createCanvas(scr.x, scr.y).parent('gameCanvas');
   frameRate(speed);
   noStroke();
   bg();
@@ -95,7 +102,7 @@ function loadSound(src, volume=1, loop=false) {
     loop: loop,
 
     onload: function() {
-      console.log('loaded sound: ' + src);
+      // console.log('loaded sound: ' + src);
     }
   });
 }
