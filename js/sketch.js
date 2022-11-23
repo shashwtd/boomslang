@@ -14,7 +14,7 @@ function start_game() {
   sounds.music.play();
   snake = new Snake();
   spawnFruit();
-  
+  change_border(snake.color);
 }
 
 bg = () => {
@@ -45,7 +45,6 @@ function load_sound(name, filename) {
     onload: () => {
       counter++;
       if (counter == songs.length) {
-        console.log("loaded");
         hide_loader();
         show_menu();
       }
@@ -73,7 +72,6 @@ setup = () => {
 
 draw = () => {
   if (mode == 'menu' || mode == 'loader') {
-    console.log("menu");
     return show_menu();
   }
   bg();
@@ -238,19 +236,19 @@ class Snake {
     }
   }
 
+  reset() {
+    this.total = 0;
+    this.tail = [];
+  }
+
   gameOver() {
     for (let i = 0; i < this.tail.length; i++) {
       var pos = this.tail[i];
       var d = dist(this.x, this.y, pos.x, pos.y);
       if (d < 1) {
-        console.log("starting over");
-        this.total = 0;
-        this.tail = [];
-        // Play death sound and fade music
+        this.reset();
         sounds.death.play();
         sounds.music.stop();
-        
-        // Reset the game after 3 seconds
         setTimeout(function(){
           start_game();
         }, 1500);

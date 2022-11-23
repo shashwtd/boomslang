@@ -19,9 +19,11 @@ install_listeners = () => {
         hide_menu();
         start_game();
     });
+
     document.getElementById('menu-btn').addEventListener('click', () => {
         show_menu();
     });
+
     document.getElementById('settings-btn').addEventListener('click', () => {
         document.getElementById('settings').classList.toggle('active');
         document.getElementById('settings-menu').classList.toggle('active');
@@ -63,7 +65,8 @@ function hide_menu() {
 }
 
 function change_border(color='var(--theme)') {
-    document.getElementById('gameCanvas').style.borderColor = color;
+    var opacity = floor(100).toString(16);
+    document.getElementById('gameCanvas').style.borderColor = color+ opacity;
 }
 
 window.onload = () => {
