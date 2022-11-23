@@ -5,15 +5,16 @@ var tile;
 var snake;
 var apple, food;
 var sounds = {}, counter = 0;
-var songs = ['eat', 'beep', 'death', 'music'];
+var songs = ['eat', 'death', 'music', 'beep'];
 var mode = 'loader';
 
+
 function start_game() {
+  mode = 'active';
+  sounds.music.play();
   snake = new Snake();
   spawnFruit();
-  mode = 'active';
-  sounds.music.setVolume(0.3);
-  sounds.music.loop();
+  
 }
 
 bg = () => {
@@ -36,24 +37,30 @@ preload = () => {
 }
 
 function load_sound(name, filename) {
-  var song = loadSound(filename, loaded);
-  
-  // callback
-  function loaded() {
-    console.log("loaded sound: " + name);
-    sounds[name] = song;
-    counter++;
-    if (counter == songs.length) {
-      console.log("all sounds loaded");
-      start_game();
+  // load sound with howler.js and loader
+  sounds[name] = new Howl({
+    src: [filename],
+    loop: name == 'music' ? true : false,
+    volume: name == 'beep' || name == 'music' ? 0.3 : 1,
+    onload: () => {
+      counter++;
+      if (counter == songs.length) {
+        console.log("loaded");
+        hide_loader();
+        show_menu();
+      }
     }
-  }
+  });
 }
 
 
 
 setup = () => {
-  createCanvas(scr.x, scr.y).parent('gameCanvas');
+  let gameCanvas = document.getElementById('gameCanvas');
+  createCanvas(scr.x, scr.y).parent(gameCanvas);
+  gameCanvas.style.width = scr.x + 10 + 'px';
+  gameCanvas.style.height = scr.y + 10 + 'px';
+  
   frameRate(speed);
   noStroke();
   bg();
@@ -67,7 +74,7 @@ setup = () => {
 draw = () => {
   if (mode == 'menu' || mode == 'loader') {
     console.log("menu");
-    return display_menu();
+    return show_menu();
   }
   bg();
   snake.gameOver();
@@ -80,10 +87,6 @@ draw = () => {
 
   // Draw fruit
   image(apple, food.x, food.y, tile, tile);
-}
-
-function display_menu() {
-
 }
 
 
@@ -129,6 +132,7 @@ class Snake {
     this.yspeed = 0;
     this.total = 0;
     this.tail = [];
+    this.color = "#445599";
   }
 
   update() {
@@ -147,14 +151,13 @@ class Snake {
 
   }
   show() {
-    var color = "#445599";
     var l = this.tail.length
     for (let i = 0; i < l; i++) {
       var part = this.tail[i];
       var decrease_x = 0;
       var decrease_y = 0;
       var opacity = (floor((145 / this.tail.length) * i) + 110).toString(16);
-      fill(color + opacity);
+      fill(this.color + opacity);
       if (this.tail[i - 1].x != this.tail[i].x) {
         decrease_x = 0;
       } else if (this.tail[i - 1].y != this.tail[i].y) {
@@ -181,7 +184,7 @@ class Snake {
       }
 
     }
-    fill(color);
+    fill(this.color);
     // strokeWeight(3);
     // stroke("#394");
     if (this.xspeed === 1) {
@@ -212,7 +215,7 @@ class Snake {
     if (this.xspeed != x || this.yspeed != y) {
       this.xspeed = x;
       this.yspeed = y;
-      sounds['beep'].play();
+      sounds.beep.play();
     }
   }
 
@@ -245,8 +248,7 @@ class Snake {
         this.tail = [];
         // Play death sound and fade music
         sounds.death.play();
-        sounds.music.setVolume(0, .5);
-        sounds.music.stop(.5);
+        sounds.music.stop();
         
         // Reset the game after 3 seconds
         setTimeout(function(){
