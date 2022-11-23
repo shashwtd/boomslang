@@ -4,21 +4,16 @@ var speed = 10;
 var tile;
 var snake;
 var apple, food;
-var eat, beep, death, music;
-
-var mode;
+var sounds = {}, counter = 0;
+var songs = ['eat', 'beep', 'death', 'music'];
+var mode = 'loader';
 
 function start_game() {
   snake = new Snake();
-  // snake.grow();
   spawnFruit();
-  music = loadSound('/res/music.wav', 0.2, true);
-  music.play();
-}
-
-window.onload = () => {
-  // moving the game menu inside canvas
-  console.log(document.getElementById('gameCanvas').appendChild(document.getElementById('menu')));
+  mode = 'active';
+  sounds.music.setVolume(0.3);
+  sounds.music.loop();
 }
 
 bg = () => {
@@ -32,33 +27,46 @@ bg = () => {
   }
 }
 
+
 preload = () => {
-  
   scr = createVector(round(window.innerHeight - 50), round(window.innerHeight - 50));
   tile = scr.x / col;
-  
-  // load images
-  apple = loadImage('/res/apple.svg');
-  
-  // load sounds
-  eat = loadSound('/res/eat.wav');
-  beep = loadSound('/res/beep.wav', 0.3);
-  death = loadSound('/res/die.wav');
-  music = loadSound('/res/music.wav', 0.2, true);
+
+  apple = loadImage("/res/apple.svg");
 }
 
+function load_sound(name, filename) {
+  var song = loadSound(filename, loaded);
+  
+  // callback
+  function loaded() {
+    console.log("loaded sound: " + name);
+    sounds[name] = song;
+    counter++;
+    if (counter == songs.length) {
+      console.log("all sounds loaded");
+      start_game();
+    }
+  }
+}
+
+
+
 setup = () => {
-  console.log("load time: " + floor(millis()) + "ms");  
-  mode = false;
   createCanvas(scr.x, scr.y).parent('gameCanvas');
   frameRate(speed);
   noStroke();
   bg();
-  start_game();
+
+  // load sounds
+  for (let _ = 0; _ < songs.length; _++) {
+    load_sound(songs[_], "/res/" + songs[_] + ".wav");
+  }
 }
 
 draw = () => {
-  if (mode == 0) {
+  if (mode == 'menu' || mode == 'loader') {
+    console.log("menu");
     return display_menu();
   }
   bg();
@@ -75,10 +83,14 @@ draw = () => {
 }
 
 function display_menu() {
+
 }
 
 
 function keyPressed() {
+  // return if menu is open or game is loading
+  if (mode == 'menu' || mode == 'loader') return;
+
   // WASD + arrow controls
   if (keyCode === UP_ARROW || keyCode === 87) {
     snake.dir(0, -1);
@@ -93,20 +105,6 @@ function keyPressed() {
     // eat.play()
   }
 }
-
-// load sound funtion for howler.js
-function loadSound(src, volume=1, loop=false) {
-  return new Howl({
-    src: [src],
-    volume: volume,
-    loop: loop,
-
-    onload: function() {
-      // console.log('loaded sound: ' + src);
-    }
-  });
-}
-
 
 function spawnFruit() {
   // Generate fruit on grid and avoid spawning on nake
@@ -146,8 +144,8 @@ class Snake {
 
     this.x = constrain(this.x, 0, scr.x - tile);
     this.y = constrain(this.y, 0, scr.y - tile);
-  }
 
+  }
   show() {
     var color = "#445599";
     var l = this.tail.length
@@ -214,7 +212,7 @@ class Snake {
     if (this.xspeed != x || this.yspeed != y) {
       this.xspeed = x;
       this.yspeed = y;
-      beep.play();
+      sounds['beep'].play();
     }
   }
 
@@ -222,7 +220,7 @@ class Snake {
     var d = dist(this.x, this.y, pos.x, pos.y);
     if (d < 1) {
       this.total++;
-      eat.play();
+      sounds['eat'].play();
       return true;
     } else {
       return false;
@@ -246,8 +244,9 @@ class Snake {
         this.total = 0;
         this.tail = [];
         // Play death sound and fade music
-        death.play();
-        music.fade(0.2, 0, 500);
+        sounds.death.play();
+        sounds.music.setVolume(0, .5);
+        sounds.music.stop(.5);
         
         // Reset the game after 3 seconds
         setTimeout(function(){
