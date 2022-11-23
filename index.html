@@ -14,16 +14,33 @@
 
     <!-- Scripts -->
     <script src="/lib/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/addons/p5.sound.js" integrity="sha512-TU9AWtV5uUZPX8dbBAH8NQF1tSdigPRRT82vllAQ1Ke28puiqLA6ZVKxtUGlgrH6yWFnkKy+sE6luNEGH9ar0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/lib/howler.js"></script>
 </head>
 
 <body>
     <div id="game">
-        <div id="gameCanvas"></div>
-        
+        <div id="gameCanvas">
+            <div id="menu">
+                <div class="menu-content">
+                    <h1 class="title">BoomSlang!</h1>
+                    <p>Press start when ready.</p>
+    
+                </div>
+                <div class="menu-buttons">
+                    <button class="btn" id="start-btn">Start</button>
+                    <button class="btn" id="settings-btn">Settings</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="bg"></div>
+    <div id="loader-screen">
+        <div class="loader-container">
+            <div class="loader"></div>
+            <p class="loader-text">Loading...</p>
+        </div>
+    </div>
 
     <!-- Post Render Javascript -->
     <script src="./js/main.js"></script>
@@ -35,15 +52,5 @@
 
 <!-- 
 
-    <div id="menu">
-            <div class="menu-content">
-                <h1 class="title">BoomSlang!</h1>
-                <p>Press start when ready.</p>
-
-            </div>
-            <div class="menu-buttons">
-                <button class="btn" id="start">Start</button>
-                <button class="btn" id="settings">Settings</button>
-            </div>
-        </div>
+    
  -->
