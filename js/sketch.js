@@ -211,9 +211,11 @@ class Snake {
   dir(x, y) {
     // Update and play sound if there is a change
     if (this.xspeed != x || this.yspeed != y) {
-      this.xspeed = x;
-      this.yspeed = y;
-      sounds.beep.play();
+      if (this.xspeed != -x && this.yspeed != -y) {
+        this.xspeed = x;
+        this.yspeed = y;
+        sounds.beep.play();
+      }
     }
   }
 
